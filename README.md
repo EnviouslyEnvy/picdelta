@@ -28,16 +28,6 @@ An advanced image comparison tool originally designed for analyzing and observin
 - **Pixel difference count** - Number of differing pixels
 - **Maximum pixel difference** - Largest single pixel variance
 
-## Usage
-
-1. **Upload Images**: Drag and drop or click to select two images to compare
-2. **View Comparison**: Images are automatically compared when both are loaded
-3. **Analyze Differences**:
-   - Use "Side by Side" mode to see both images and their difference
-   - Use "Difference Only" mode to focus on the difference visualization
-4. **Zoom and Pan**: Use mouse wheel to zoom, drag to pan around images
-5. **Review Metrics**: Check the quantitative analysis below the images
-
 ## Technical Details
 
 ### Supported Formats
@@ -56,8 +46,7 @@ Currently, images with different resolutions may display at different visual siz
 ## Development
 
 Built with:
-- React + TypeScript
-- Vite for fast development
+- React + TypeScript + Vite
 - Canvas API for image processing
 - shadcn for components and theming
 
@@ -71,12 +60,4 @@ npm install
 ### Development
 ```bash
 npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Production Build
-```bash
-npm run build
-npm run preview
 ```

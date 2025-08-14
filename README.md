@@ -30,6 +30,7 @@ Personally, I used it to see what upscalers would work best on old photoshoots o
 - **Pixel difference count** - Number of differing pixels
 - **Maximum pixel difference** - Largest single pixel variance
 
+<<<<<<< HEAD
 ## Usage
 
 1. **Upload**: Drag and drop or click to select two images to compare
@@ -38,6 +39,8 @@ Personally, I used it to see what upscalers would work best on old photoshoots o
    - Use "Difference Only" mode to focus on the difference visualization
 3. **Neat mEtrics**: Check the quantitative analysis below the images
 
+=======
+>>>>>>> 70767bed1bcb35cea5650ffac24f19e15edb82af
 ## Technical Details
 
 ### Supported Formats
@@ -56,8 +59,7 @@ Currently, images with different resolutions may display at different visual siz
 ## Development
 
 Built with:
-- React + TypeScript
-- Vite for fast development
+- React + TypeScript + Vite
 - Canvas API for image processing
 - shadcn for components and theming
 
@@ -71,12 +73,4 @@ npm install
 ### Development
 ```bash
 npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Production Build
-```bash
-npm run build
-npm run preview
 ```

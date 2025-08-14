@@ -30,7 +30,6 @@ Personally, I used it to see what upscalers would work best on old photoshoots o
 - **Pixel difference count** - Number of differing pixels
 - **Maximum pixel difference** - Largest single pixel variance
 
-<<<<<<< HEAD
 ## Usage
 
 1. **Upload**: Drag and drop or click to select two images to compare
@@ -39,8 +38,6 @@ Personally, I used it to see what upscalers would work best on old photoshoots o
    - Use "Difference Only" mode to focus on the difference visualization
 3. **Neat mEtrics**: Check the quantitative analysis below the images
 
-=======
->>>>>>> 70767bed1bcb35cea5650ffac24f19e15edb82af
 ## Technical Details
 
 ### Supported Formats
@@ -51,10 +48,9 @@ Personally, I used it to see what upscalers would work best on old photoshoots o
 Currently, images with different resolutions may display at different visual sizes. Currently I'm working on consistent visual sizing with configurable scaling options.
 
 ### Planned Scaling Features
-- **No Interpolation**: Maintain exact pixel data (current behavior)
-- **Nearest Neighbor**: Sharp, pixelated scaling for precise pixel analysis
-- **Bilinear/Bicubic**: High-quality smooth scaling for visual comparison
-- **Consistent Visual Sizing**: Option to display different resolution images at the same visual size
+- **No Interpolation**: exact pixel data (current behavior)
+- **Nearest Neighbor**
+- **Bilinear/Bicubic**
 
 ## Development
 

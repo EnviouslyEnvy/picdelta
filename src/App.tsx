@@ -21,9 +21,10 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [viewState, setViewState] = useState<ViewState>({
     zoom: 1,
-    offsetX: 0,
-    offsetY: 0
+    centerX: 0.5,
+    centerY: 0.5
   })
+  const [isPanning, setIsPanning] = useState(false)
 
   // Container sizing
   const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
@@ -53,7 +54,7 @@ export default function App() {
       setIsProcessing(true)
       
       // Reset view state when new images are loaded
-      setViewState({ zoom: 1, offsetX: 0, offsetY: 0 })
+      setViewState({ zoom: 1, centerX: 0.5, centerY: 0.5 })
       
       // Use debounced comparison for better performance
       debouncedCompareImages(img1, img2, (comparisonMetrics) => {
@@ -85,7 +86,7 @@ export default function App() {
   }, [])
 
   const handleResetView = useCallback(() => {
-    setViewState({ zoom: 1, offsetX: 0, offsetY: 0 })
+    setViewState({ zoom: 1, centerX: 0.5, centerY: 0.5 })
   }, [])
 
   const hasImages = image1 && image2
@@ -105,6 +106,8 @@ export default function App() {
                 onViewStateChange={setViewState}
                 containerWidth={containerWidth}
                 containerHeight={containerHeight}
+                isPanning={isPanning}
+                onPanningChange={setIsPanning}
               />
               <ImageViewer
                 image={image2}
@@ -113,6 +116,8 @@ export default function App() {
                 onViewStateChange={setViewState}
                 containerWidth={containerWidth}
                 containerHeight={containerHeight}
+                isPanning={isPanning}
+                onPanningChange={setIsPanning}
               />
             </div>
             {showDifference && differenceImage && (
@@ -124,6 +129,8 @@ export default function App() {
                   onViewStateChange={setViewState}
                   containerWidth={differenceWidth}
                   containerHeight={differenceHeight}
+                  isPanning={isPanning}
+                  onPanningChange={setIsPanning}
                 />
               </div>
             )}

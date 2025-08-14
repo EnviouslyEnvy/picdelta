@@ -125,4 +125,4 @@ export default function ImageUploader({ onImagesLoaded, onError }: ImageUploader
       </CardContent>
     </Card>
   )
-} 
+}

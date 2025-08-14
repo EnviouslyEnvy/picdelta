@@ -10,6 +10,8 @@ interface ImageViewerProps {
   containerWidth?: number
   containerHeight?: number
   className?: string
+  isPanning?: boolean
+  onPanningChange?: (isPanning: boolean) => void
 }
 
 export default function ImageViewer({ 
@@ -19,12 +21,14 @@ export default function ImageViewer({
   onViewStateChange,
   containerWidth = 400,
   containerHeight = 300,
-  className
+  className,
+  isPanning,
+  onPanningChange
 }: ImageViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const lastMouseRef = useRef<{ x: number, y: number } | null>(null)
 
   // Get source canvas
   const sourceCanvas = useMemo(() => {
@@ -64,25 +68,42 @@ export default function ImageViewer({
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     setIsDragging(true)
-    setDragStart({ x: e.clientX - viewState.offsetX, y: e.clientY - viewState.offsetY })
-  }, [viewState.offsetX, viewState.offsetY])
+    lastMouseRef.current = { x: e.clientX, y: e.clientY }
+    onPanningChange?.(true)
+  }, [])
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging) return
     e.preventDefault()
-    
-    const newOffsetX = e.clientX - dragStart.x
-    const newOffsetY = e.clientY - dragStart.y
-    
+
+    const last = lastMouseRef.current
+    if (!last) {
+      lastMouseRef.current = { x: e.clientX, y: e.clientY }
+      return
+    }
+
+    const dx = e.clientX - last.x
+    const dy = e.clientY - last.y
+    lastMouseRef.current = { x: e.clientX, y: e.clientY }
+
+    const totalScale = fitScale * viewState.zoom
+    const imgW = sourceCanvas.width
+    const imgH = sourceCanvas.height
+
+    const deltaCenterX = -dx / (totalScale * imgW)
+    const deltaCenterY = -dy / (totalScale * imgH)
+
     onViewStateChange({
       ...viewState,
-      offsetX: newOffsetX,
-      offsetY: newOffsetY
+      centerX: Math.min(1, Math.max(0, viewState.centerX + deltaCenterX)),
+      centerY: Math.min(1, Math.max(0, viewState.centerY + deltaCenterY))
     })
-  }, [isDragging, dragStart, viewState, onViewStateChange])
+  }, [isDragging, fitScale, viewState, onViewStateChange, sourceCanvas.width, sourceCanvas.height])
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
+    lastMouseRef.current = null
+    onPanningChange?.(false)
   }, [])
 
   // Use native event listener for wheel
@@ -95,10 +116,32 @@ export default function ImageViewer({
       
       const delta = e.deltaY > 0 ? 0.9 : 1.1
       const newZoom = Math.max(0.1, Math.min(50, viewState.zoom * delta))
-      
+
+      // Zoom around cursor position to keep point under cursor stable
+      const rect = container.getBoundingClientRect()
+      const mouseX = e.clientX - rect.left
+      const mouseY = e.clientY - rect.top
+
+      const containerCenterX = containerWidth / 2
+      const containerCenterY = containerHeight / 2
+
+      const oldScale = fitScale * viewState.zoom
+      const newScale = fitScale * newZoom
+
+      const rx = mouseX - containerCenterX
+      const ry = mouseY - containerCenterY
+
+      const imgW = sourceCanvas.width
+      const imgH = sourceCanvas.height
+
+      const newCenterX = viewState.centerX + rx * (1 / oldScale - 1 / newScale) / imgW
+      const newCenterY = viewState.centerY + ry * (1 / oldScale - 1 / newScale) / imgH
+
       onViewStateChange({
         ...viewState,
-        zoom: newZoom
+        zoom: newZoom,
+        centerX: Math.min(1, Math.max(0, newCenterX)),
+        centerY: Math.min(1, Math.max(0, newCenterY))
       })
     }
 
@@ -107,14 +150,22 @@ export default function ImageViewer({
     return () => {
       container.removeEventListener('wheel', handleWheel)
     }
-  }, [viewState, onViewStateChange])
+  }, [viewState, onViewStateChange, fitScale, containerWidth, containerHeight, sourceCanvas.width, sourceCanvas.height])
 
   // Transform with translate before scale for consistent movement
   const transformStyle = useMemo(() => {
     const totalScale = fitScale * viewState.zoom
-    
+
+    const imgW = sourceCanvas.width
+    const imgH = sourceCanvas.height
+    const vx = (viewState.centerX * imgW) - (imgW / 2)
+    const vy = (viewState.centerY * imgH) - (imgH / 2)
+
+    const translateX = -vx * totalScale
+    const translateY = -vy * totalScale
+
     return {
-      transform: `translate(${viewState.offsetX}px, ${viewState.offsetY}px) scale(${totalScale})`,
+      transform: `translate(${translateX}px, ${translateY}px) scale(${totalScale})`,
       transformOrigin: 'center',
       imageRendering: viewState.zoom > 1 ? 'pixelated' as const : 'auto' as const,
       cursor: isDragging ? 'grabbing' : 'grab',
@@ -124,7 +175,7 @@ export default function ImageViewer({
       marginLeft: `-${sourceCanvas.width / 2}px`,
       marginTop: `-${sourceCanvas.height / 2}px`
     }
-  }, [viewState.offsetX, viewState.offsetY, viewState.zoom, fitScale, isDragging, sourceCanvas.width, sourceCanvas.height])
+  }, [viewState.centerX, viewState.centerY, viewState.zoom, fitScale, isDragging, sourceCanvas.width, sourceCanvas.height])
 
   // Calculate effective zoom for display
   const effectiveZoom = fitScale * viewState.zoom
@@ -148,7 +199,7 @@ export default function ImageViewer({
           ref={canvasRef} 
           className={cn(
             "transition-none",
-            !isDragging && "transition-transform duration-100 ease-out"
+            !(isPanning ?? isDragging) && "transition-transform duration-100 ease-out"
           )}
           style={transformStyle}
         />

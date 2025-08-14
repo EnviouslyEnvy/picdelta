@@ -16,8 +16,8 @@ export interface ComparisonMetrics {
 
 export interface ViewState {
   zoom: number
-  offsetX: number
-  offsetY: number
+  centerX: number
+  centerY: number
 }
 
 export type ComparisonMode = 'sideBySide' | 'difference' | 'overlay' 

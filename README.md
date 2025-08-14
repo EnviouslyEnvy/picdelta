@@ -1,6 +1,8 @@
 # PicDelta
 
-An advanced image comparison tool originally designed for analyzing and observing differences between upscaled images with pixel-level precision. This tool helps you visualize and quantify differences between upscalers or any other types of processing in multiple metrics.
+An advanced image comparison tool originally designed for analyzing and observing differences between upscaled images with pixel-level precision. This tool visualizes and quantifies differences between upscalers or any other types of processing in multiple metrics.
+
+Personally, I used it to see what upscalers would work best on old photoshoots of myself that got compressed over social media.
 
 ## Features
 
@@ -30,13 +32,11 @@ An advanced image comparison tool originally designed for analyzing and observin
 
 ## Usage
 
-1. **Upload Images**: Drag and drop or click to select two images to compare
-2. **View Comparison**: Images are automatically compared when both are loaded
-3. **Analyze Differences**:
+1. **Upload**: Drag and drop or click to select two images to compare
+2. **Analyze Differences**:
    - Use "Side by Side" mode to see both images and their difference
    - Use "Difference Only" mode to focus on the difference visualization
-4. **Zoom and Pan**: Use mouse wheel to zoom, drag to pan around images
-5. **Review Metrics**: Check the quantitative analysis below the images
+3. **Neat mEtrics**: Check the quantitative analysis below the images
 
 ## Technical Details
 
